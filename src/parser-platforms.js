@@ -1,4 +1,4 @@
-import { getFirstMatch } from './utils';
+import { getFirstMatch, pixelDensity, screenScale } from './utils';
 
 const TYPES_LABELS = {
   tablet: 'tablet',
@@ -125,7 +125,13 @@ export default [
 
   /* Mobile */
   {
-    test: [/[^-]mobi/i],
+    test: function(parser){
+        var mobileDevice = parser.test(/[^-]mobi|mobile/i);
+      
+        /* see: https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent  */
+        var mobileScreenFactor = (screenScale.width < 768) && ((screenScale.width / pixelDensity) < 768);
+        return mobileDevice && mobileScreenFactor
+    },
     describe() {
       return {
         type: TYPES_LABELS.mobile,
@@ -142,6 +148,30 @@ export default [
       return {
         type: TYPES_LABELS.mobile,
         vendor: 'BlackBerry',
+      };
+    },
+  },
+  
+  /* Research In Motion ( BlackBerry ) */
+  
+  {
+    test(parser) {
+      return parser.test(/RIM/i)
+    },
+    describe() {
+        return {
+          type: TYPES_LABELS.tablet,
+          vendor: 'BlackBerry',
+        };
+    },
+  },
+  
+  /* KFAPWI */
+  {
+    test:[/KFAPWI/i],
+    describe() {
+      return {
+        type: TYPES_LABELS.tablet,
       };
     },
   },
@@ -199,7 +229,8 @@ export default [
   /* desktop */
   {
     test(parser) {
-      return parser.getOSName(true) === 'macos';
+      return parser.getOSName(true) === 'macos' 
+        && ((~~pixelDensity) == 1) && (screenScale.width >= 1024 && screenScale.width <= 1920);
     },
     describe() {
       return {
@@ -212,7 +243,8 @@ export default [
   /* Windows */
   {
     test(parser) {
-      return parser.getOSName(true) === 'windows';
+      return parser.getOSName(true) === 'windows'
+        && ((~~pixelDensity) == 1) && (screenScale.width >= 1024 && screenScale.width <= 1920);
     },
     describe() {
       return {
@@ -224,7 +256,8 @@ export default [
   /* Linux */
   {
     test(parser) {
-      return parser.getOSName(true) === 'linux';
+      return parser.getOSName(true) === 'linux'
+        && ((~~pixelDensity) == 1) && (screenScale.width >= 1024 && screenScale.width <= 1920);
     },
     describe() {
       return {
