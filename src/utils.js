@@ -9,7 +9,25 @@ class Utils {
     const match = ua.match(regexp);
     return (match && match.length > 0 && match[1]) || '';
   }
-
+  
+  /**
+   * Get the pixel desnsity of the device
+   * @param {Object} win
+   * @return {Number}
+   */
+  static get pixelDensity(win){
+  
+  }
+  
+  /**
+   * Get the screen dimensions of the device
+   * @param {Object} win
+   * @return {Number}
+   */
+  static get screenScale(win){
+  
+  }
+  
   /**
    * Get second matched item for a string
    * @param regexp
