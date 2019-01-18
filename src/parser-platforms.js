@@ -128,9 +128,26 @@ export default [
     test: function(parser){
         var mobileDevice = parser.test(/[^-]mobi|mobile/i);
       
-        /* see: https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent  */
-        var mobileScreenFactor = (screenScale.width < 768) && ((screenScale.width / pixelDensity) < 768);
-        return mobileDevice && mobileScreenFactor
+        /* 
+            If screen width is less than 768px, 
+            then the device is most probably
+            a mobile device
+            
+            @see: 
+            https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent
+        */
+        var mobileScreenFactor = (screenScale.width < 768) 
+          && ((screenScale.width / pixelDensity) < 768);
+        
+        /* 
+            Nexus Tablet with 
+            params: { screen_width:'601px' ,  pixel_density:1.332 } 
+            wrongly passes as "Mobile Device" 
+            based on mobile screen factor test 
+        */
+        var isNexusTablet = parser.test(/nexus\s*(?:7|8|9|10).*/i)
+      
+        return mobileDevice && mobileScreenFactor && !isNexusTablet
     },
     describe() {
       return {
@@ -142,7 +159,7 @@ export default [
   /* BlackBerry */
   {
     test(parser) {
-      return parser.getBrowserName(true) === 'blackberry';
+      return parser.test(/\bBB\d+/i) || parser.getBrowserName(true) === 'blackberry';
     },
     describe() {
       return {
